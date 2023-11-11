@@ -201,7 +201,6 @@ def render_company_profile(ticker):
         options=duration_options,
         index=duration_options.index('1Y')  # Set default to '1Y'
     )
-
     # Calculate start date based on selected duration
     end_date = datetime.today().strftime('%Y-%m-%d')
     if chart_duration == 'MAX':
@@ -217,7 +216,7 @@ def render_company_profile(ticker):
             '5Y': 5 * 365
         }
         start_date = (datetime.today() - timedelta(days=duration_map[chart_duration])).strftime('%Y-%m-%d')
-
+        
     # Fetch stock data
     stock_data = get_stock_data(ticker, start_date, end_date)
     fig = go.Figure()
@@ -434,25 +433,19 @@ def render_simulation(ticker):
     # Estimating the Value at Risk (VaR) at 95% confidence interval
     var_95 = np.percentile(simulated_prices[-1], 5)
     st.write(f"#### Value at Risk (VaR): ${var_95:.2f}")
-
- 
 #==============================================================================
 # Tab 4: Additional Analysis
 #==============================================================================
 def render_analysis(ticker):
     st.subheader("Stocks Comparison and Financial Metrics")
-
     # Fetch the tickers from Wikipedia's S&P 500 list only once
     sp500_tickers = fetch_sp500_tickers()
-
     # Allow users to select stocks for comparison and metrics
     tickers = st.multiselect("Select up to 3 Stocks", options=sp500_tickers, default=['AAPL', 'MSFT', 'AMZN'])
-
     # Limit to 3 selections
     if len(tickers) > 3:
         st.warning("Please select no more than 3 stocks.")
         tickers = tickers[:3]
-
     if tickers:
         # Fetch and display closing price comparison chart using cached data
         start_date = datetime.now() - timedelta(days=365)
@@ -462,7 +455,6 @@ def render_analysis(ticker):
             stock_data = get_stock_data(selected_ticker, start_date, end_date)
             comparison_data[selected_ticker] = stock_data['Close']
         st.line_chart(comparison_data)
-
         # Collect financial metrics for each selected ticker
         metrics_data = []
         for selected_ticker in tickers:
@@ -473,20 +465,15 @@ def render_analysis(ticker):
                 "P/E Ratio": stock_info.get('trailingPE', "Data not available"),
                 "Dividend Yield": stock_info.get('dividendYield', "Data not available")
             })
-
         # Convert list of dictionaries to DataFrame
         metrics_df = pd.DataFrame(metrics_data)
         metrics_df.index += 1  # Adjust index to start from 1
-
         # Display the DataFrame
         st.dataframe(metrics_df)
-
 #==============================================================================
 # Main App Function
 #==============================================================================  
 def main():
-   
-    
     tabs = st.tabs(["Company Profile", "Chart", "Financials", "Stock Simulation", " Stocks Comparison "])
     with tabs[0]:
         render_company_profile(ticker)
