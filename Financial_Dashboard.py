@@ -96,12 +96,9 @@ class YFinance:
                     ret[key] = info[mainKeys][key]
 
         return ret
-
-
 #==============================================================================
 # Functions 
 #==============================================================================
-
 # Function to fetch S&P 500 tickers
 @st.cache_data
 def fetch_sp500_tickers():
@@ -164,8 +161,6 @@ def monte_carlo_simulation(data, t, n, seed=123):
         price_paths[t] = price_paths[t - 1] * daily_returns[t]
 
     return price_paths
-
-
 #==============================================================================
 # Header
 #==============================================================================
@@ -190,7 +185,6 @@ ticker_list = fetch_sp500_tickers()
 
 # Dropdown for stock selection
 ticker = st.selectbox("Select a stock from S&P 500", ticker_list)
-
 
 #==============================================================================
 # Tab 0: Summary
@@ -234,7 +228,6 @@ def render_company_profile(ticker):
         yaxis_title='Price (USD)',
         template='plotly_white'  # Optional: sets the background to white
     )
-
     st.plotly_chart(fig)
     # Fetch and display company information
     company_info = get_company_info(ticker)
@@ -305,8 +298,7 @@ def render_chart(ticker):
         "5Y": 60,
         "MAX": "MAX"
     }
-
-    # Set the default duration to 1Y (12 months)
+    # Set the default duration to 1Y (12 monthz)
     duration = st.selectbox("Select Duration", list(duration_options.keys()), index=list(duration_options.keys()).index('1Y'), key="duration_select")
 
     # Custom date selection
@@ -347,7 +339,7 @@ def render_chart(ticker):
     # Plot Type Selection
     plot_type = st.selectbox("Plot Type", ["Line Plot", "Candlestick Plot"], key="plot_type_select")
 
-    # Create the figure object with a secondary y-axis for volume
+    # Create the figure objectdd with a secondary y-axis for volume 
     fig = make_subplots(specs=[[{"secondary_y": True}]])
 
     # Plot Line Plot or Candlestick
@@ -380,7 +372,6 @@ def render_chart(ticker):
             type='date'
         )
     )
-
     # Set y-axes titles
     fig.update_yaxes(title_text="<b>Price</b>", secondary_y=False)
     fig.update_yaxes(title_text="<b>Volume</b>", secondary_y=True)
@@ -393,25 +384,20 @@ def render_chart(ticker):
 # Tab 2: Financials
 #==============================================================================
 def render_financials(ticker):
-
     st.write("## Financial Statements")
     statement_type = st.radio(
         "Select the Financial Statement",
         ('Income Statement', 'Balance Sheet', 'Cash Flow')
     )
-
     # Adding an option to select between Annual and Quarterly
     period = st.radio(
         "Select Period",
         ('Annual', 'Quarterly')
     )
-
     # Fetch financial data based on selected statement type and period
     financial_data = get_financial_data(ticker, statement_type, period)
-
     st.write(f"### {statement_type}")
     st.dataframe(financial_data)
-
 
 #==============================================================================
 # Tab 3: Monte Carlo Simulation
@@ -424,29 +410,22 @@ def render_simulation(ticker):
 
     stock_data = get_stock_data(ticker, datetime.now() - timedelta(days=365), datetime.now())
     current_stock_price = stock_data['Close'].iloc[-1]
-
     simulated_prices = monte_carlo_simulation(stock_data, time_horizon, n_simulations)
     plt.figure(figsize=(10, 6))
-
-    # Use a more perceptually uniform colormap (e.g., 'viridis')
     colors = plt.cm.viridis(np.linspace(0, 1, n_simulations))
-
-    # Plot each simulation path with a lower opacity
+   
+    # Plot each simulation path 
     for i in range(n_simulations):
         plt.plot(simulated_prices[:, i], color=colors[i], linewidth=0.5, alpha=0.25)  # Reduced alpha for less visual clutter
-
-    # Plotting the current stock price as a thicker, bright red dashed line
+   
+    # Plotting the current stock price 
     plt.axhline(y=current_stock_price, color='red', linestyle='--', linewidth=2, label=f"Current Stock Price: ${current_stock_price:.2f}")
 
     # Title and labels with increased font size for better readability
     plt.title(f"Monte Carlo Simulation for {ticker} Over Next {time_horizon} Days", fontsize=14)
     plt.xlabel("Day", fontsize=12)
     plt.ylabel("Stock Price", fontsize=12)
-
-    # Adding grid for better readability
     plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-
-    # Enhance the legend
     plt.legend(loc="upper left", fontsize=10)
 
     # Show the plot
@@ -507,7 +486,7 @@ def render_analysis(ticker):
 #==============================================================================  
 def main():
    
-    # Tabs
+    
     tabs = st.tabs(["Company Profile", "Chart", "Financials", "Stock Simulation", " Stocks Comparison "])
     with tabs[0]:
         render_company_profile(ticker)
